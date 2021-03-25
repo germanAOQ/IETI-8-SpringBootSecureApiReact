@@ -1,5 +1,6 @@
 package com.eci.cosw.springbootsecureapi.controller;
 
+import com.eci.cosw.springbootsecureapi.exception.TPException;
 import com.eci.cosw.springbootsecureapi.model.User;
 import com.eci.cosw.springbootsecureapi.service.UserService;
 import io.jsonwebtoken.Jwts;
@@ -27,7 +28,6 @@ public class UserController
     public Token login( @RequestBody User login )
         throws ServletException
     {
-
         String jwtToken = "";
 
         if ( login.getUsername() == null || login.getPassword() == null )
@@ -37,10 +37,13 @@ public class UserController
 
         String username = login.getUsername();
         String password = login.getPassword();
-
-
         //TODO implement logic to verify user credentials
-        User user = userService.getUser(this.getId(login));
+        User user = null;
+        try {
+            user = userService.getUser(this.getId(login));
+        } catch (TPException e) {
+            e.printStackTrace();
+        }
 
         if ( user == null )
         {
@@ -60,14 +63,12 @@ public class UserController
         return new Token( jwtToken );
     }
 
-    public long getId(User user){
+    public long getId(User user) throws TPException {
         long id = -1;
-        User actualUser = userService.findUserByEmailAndPassword(user.getEmail(),user.getPassword());
-        if(actualUser.getId()==0 || actualUser == null){
-            id = 1;
-        }else{
-            id = userService.getUsers().get(userService.getUsers().size()-1).getId()+1;
-        }
+        User actualUser = userService.findUserByUsernameAndPassword(user.getUsername(), user.getPassword());
+        if(actualUser == null) throw new TPException(TPException.USUARIO_NO_PRESENTE);
+        id = userService.getUsers().indexOf(actualUser)+1;
+        actualUser.setId(id);
         return id;
     }
 
