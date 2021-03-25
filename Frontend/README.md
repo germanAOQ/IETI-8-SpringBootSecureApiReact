@@ -3,7 +3,7 @@
 Username: userIETI                                                    
 Password: passwordIETI                     
 ```
-
+Las pruebas de la parte 2, correspondientes a los dos últimos llamados al API, se verifican a través de la consola con console.log.
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
