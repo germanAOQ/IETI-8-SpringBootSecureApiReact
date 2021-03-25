@@ -17,12 +17,12 @@ public class TaskController {
     @Autowired
     TaskService taskService;
 
-    @GetMapping("tasks")
+    @GetMapping("/tasks")
     public String getTasks(){
         return new Gson().toJson(taskService.getTasks());
     }
 
-    @PostMapping("task")
+    @PostMapping("/task")
     public ResponseEntity<?> newTask(@RequestBody Task newTask){
         taskService.createTask(newTask);
         return new ResponseEntity<>(null, HttpStatus.OK);

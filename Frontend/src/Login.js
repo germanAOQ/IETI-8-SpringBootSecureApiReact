@@ -52,6 +52,7 @@ function CenteredGrid(){
 	const [userList, setUserList] = useState([]);
 	const [token, setToken] = useState("");
 	const [first, setFirst] = useState(true);
+	var axio = require("axios");
 	
 	
 	function handleClick(){
@@ -97,18 +98,53 @@ function CenteredGrid(){
                 setUserList(usersList)
             });
 		postToken("userIETI","passwordIETI");
-	
-    }
+		
+		
+	}
 	
 	function postToken(usernameT, passwordT){
 		axios.post("http://localhost:8080/user/login",{
 			username: usernameT,
 			password: passwordT
 		}).then(function(res){
+			console.log("Este es el token: "+res.data.accessToken);
 			setToken(res.data.accessToken);
 			if(localStorage.getItem("token"+usernameT+passwordT)!=null){
 				localStorage.setItem("token"+usernameT+passwordT, res.data.accessToken);
 			}
+			var axiosToken = require("axios");
+			axiosToken = axiosToken.create({
+            baseURL: 'http://localhost:8080/api/',
+            timeout: 1000,
+            headers: { authorization: 'Bearer ' + token}
+			});
+			axiosToken.get("http://localhost:8080/api/test", {headers: { authorization : 'Bearer '+ token}})
+				.then((res) => {
+					console.log(res.data);
+				})
+				.catch((error) => {
+					console.log("error");
+				});
+			axiosToken.get("http://localhost:8080/api/tasks", {headers: { authorization : 'Bearer '+ token}})
+				.then((res) => {
+					console.log(res.data);
+				})
+				.catch((error) => {
+					console.log("error");
+				});
+			axios.post("http://localhost:8080/api/task", {
+				title: "Nueva Tarea",
+				status: "Ready",
+				dueDate: "24-03-2021",
+				responsable: "Germán"
+			}
+			,{headers: { authorization : 'Bearer '+ token}})
+				.then((res) => {
+					console.log("Usuario añadido");
+				})
+				.catch((error) => {
+					console.log("error");
+				});
 		})
 		.catch(function (error){
 			console.log("Hubo un error");

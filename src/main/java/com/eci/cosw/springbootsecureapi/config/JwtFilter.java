@@ -30,7 +30,8 @@ public class JwtFilter
         final HttpServletResponse response = (HttpServletResponse) servletResponse;
         final String authHeader = request.getHeader( "authorization" );
 
-        if ( "OPTIONS".equals( request.getMethod() ) )
+        System.out.println(request.getMethod());
+        if ( "GET".equals( request.getMethod() ) || "POST".equals( request.getMethod()) || "OPTIONS".equals(request.getMethod()))
         {
             response.setStatus( HttpServletResponse.SC_OK );
 
@@ -38,7 +39,6 @@ public class JwtFilter
         }
         else
         {
-
             if ( authHeader == null || !authHeader.startsWith( "Bearer " ) )
             {
                 throw new ServletException( "Missing or invalid Authorization header" );
